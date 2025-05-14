@@ -26,9 +26,23 @@ async function run() {
 
     const foodCollection = client.db('food-item-collection').collection('tem-menu');
     app.get('/menu', async (req, res) => {
-      const result = await foodCollection.find().toArray()
+      const page = parseInt(req.query.page);
+      const size = parseInt(req.query.size);
+      const category = req.query.category;
+      const query = category ? { category: category } : {};
+
+      console.log('pagination' , req.query, page, size);
+      const result = await foodCollection.find(query)
+      .skip(page * size)
+      .limit(size)
+      .toArray();
       res.send(result);
     })
+
+     app.get('/menuCount', async (req, res) => {
+      const count = await foodCollection.countDocuments();
+      res.send(count);
+     })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
