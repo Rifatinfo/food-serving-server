@@ -4,7 +4,7 @@ const cors = require('cors')
 const { MongoClient, ServerApiVersion } = require('mongodb');
 
 const app = express()
-const port = process.env.PORT || 5000
+const port = process.env.PORT || 5000;
 app.use(cors())
 app.use(express.json())
 
@@ -25,6 +25,7 @@ async function run() {
     await client.connect();
 
     const foodCollection = client.db('food-item-collection').collection('tem-menu');
+    const foodCardCollection =  client.db('bistro-card').collection('cards');
     app.get('/menu', async (req, res) => {
       const page = parseInt(req.query.page);
       const size = parseInt(req.query.size);
@@ -42,6 +43,17 @@ async function run() {
      app.get('/menuCount', async (req, res) => {
       const count = await foodCollection.countDocuments();
       res.send(count);
+     })
+
+     app.post('/cards', async(req, res) =>{
+      const cardItem = req.body;
+      const result = await foodCardCollection.insertOne(cardItem);
+      res.send(result);
+     })
+
+     app.get('/cards', async (req, res) => {
+      const result = await foodCardCollection.find().toArray();
+      res.send(result);
      })
 
     // Send a ping to confirm a successful connection
