@@ -25,36 +25,38 @@ async function run() {
     await client.connect();
 
     const foodCollection = client.db('food-item-collection').collection('tem-menu');
-    const foodCardCollection =  client.db('bistro-card').collection('cards');
+    const foodCardCollection = client.db('bistro-card').collection('cards');
     app.get('/menu', async (req, res) => {
       const page = parseInt(req.query.page);
       const size = parseInt(req.query.size);
       const category = req.query.category;
       const query = category ? { category: category } : {};
 
-      console.log('pagination' , req.query, page, size);
+      console.log('pagination', req.query, page, size);
       const result = await foodCollection.find(query)
-      .skip(page * size)
-      .limit(size)
-      .toArray();
+        .skip(page * size)
+        .limit(size)
+        .toArray();
       res.send(result);
     })
 
-     app.get('/menuCount', async (req, res) => {
+    app.get('/menuCount', async (req, res) => {
       const count = await foodCollection.countDocuments();
       res.send(count);
-     })
+    })
 
-     app.post('/cards', async(req, res) =>{
+    app.post('/cards', async (req, res) => {
       const cardItem = req.body;
       const result = await foodCardCollection.insertOne(cardItem);
       res.send(result);
-     })
+    })
 
-     app.get('/cards', async (req, res) => {
-      const result = await foodCardCollection.find().toArray();
+    app.get('/cards', async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email }
+      const result = await foodCardCollection.find(query).toArray();
       res.send(result);
-     })
+    })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
