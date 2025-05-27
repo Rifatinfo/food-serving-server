@@ -50,6 +50,12 @@ async function run() {
       res.send(result);
     })
 
+    app.post('/menu', async (req, res) => {
+      const item = req.body;
+      const result = await foodCollection.insertOne(item);
+      res.send(result);
+    })
+
     // middlewares 
     const verifyToken = (req, res, next) => {
       console.log('inside verify token', req.headers.authorization);
