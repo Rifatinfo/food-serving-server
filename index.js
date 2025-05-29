@@ -100,6 +100,24 @@ async function run() {
       res.send(result);
     })
 
+    app.patch('/menu/:id', async (req, res) => {
+      const item = req.body;
+      const id = req.params.id;
+      const filter = {_id : new ObjectId(id)}
+      const updateDoc = {
+        $set : {
+          name : item.name,
+          category : item.price,
+          price : item.price,
+          recipe : item.recipe,
+          image : item.image
+        }
+      }
+
+      const result = await foodCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    })
+
     app.get('/users/admin/:email', verifyToken, async (req, res) => {
       const email = req.params.email;
       if (email !== req.decoded.email) {
